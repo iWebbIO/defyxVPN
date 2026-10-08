@@ -122,8 +122,25 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      # No signing secrets on the fork: omit key.properties entirely so the
-      # Gradle config falls back to debug signing and the APK still installs.
+      # No signing secrets on the fork: generate a local release keystore so
+      # Gradle signs a self-contained installable APK (debug keystore
+      # auto-creation fails on the runner: ~/.config/.android not writable).
+      - name: Create signing keystore
+        run: |
+          keytool -genkeypair -v \
+            -keystore android/app/fork-release.jks \
+            -storetype PKCS12 \
+            -storepass defyxfork \
+            -keypass defyxfork \
+            -alias defyxfork \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=DefyxVPN Fork, OU=CI, O=Fork, C=US"
+          printf '%s\n' \
+            'storePassword=defyxfork' \
+            'keyPassword=defyxfork' \
+            'keyAlias=defyxfork' \
+            'storeFile=fork-release.jks' > android/key.properties
+
       - name: Build APK
         run: flutter build apk --release
 
