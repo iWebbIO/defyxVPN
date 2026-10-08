@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../models/settings_item.dart';
 import '../models/settings_group.dart';
 import '../constants/settings_constants.dart';
@@ -19,7 +21,11 @@ class SettingsConfig {
     this.customItems = const [],
   });
 
-  static const defaultConfig = SettingsConfig();
+  /// Split tunneling routes selected apps in or out of the tunnel via
+  /// VpnService.Builder app filters, which only Android provides.
+  static final SettingsConfig defaultConfig = SettingsConfig(
+    showSplitTunnel: Platform.isAndroid,
+  );
 }
 
 class SettingsFactory {
@@ -80,6 +86,7 @@ class SettingsFactory {
       isAccessible: true,
       sortOrder: 0,
       itemType: SettingsItemType.navigation,
+      navigationRoute: SettingsRoute.splitTunnel,
       subtitle: subtitle,
     );
   }

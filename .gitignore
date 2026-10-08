@@ -55,3 +55,6 @@ app.*.map.json
 # Windows
 defyx_complete.ps1
 defyxvpn_cert.pfx
+
+# Mimosa security scan state
+.mimosa/

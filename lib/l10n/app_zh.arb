@@ -120,5 +120,49 @@
   "loginByCode": "使用代码登录",
   "backToLoginByEmail": "返回电子邮件登录",
   "connectionRequired": "需要连接",
-  "connectionRequiredDescription": "要完成安全的登录或注册过程，您必须首先使用可用的连接方法之一建立连接。"
+  "connectionRequiredDescription": "要完成安全的登录或注册过程，您必须首先使用可用的连接方法之一建立连接。",
+  "settingsExcluded": "已排除",
+  "@settingsExcluded": {
+    "description": "settingsExcluded"
+  },
+  "splitTunnelUnavailable": "分离隧道功能仅在 Android 上可用。",
+  "@splitTunnelUnavailable": {
+    "description": "splitTunnelUnavailable"
+  },
+  "splitTunnelModeExclude": "排除应用",
+  "@splitTunnelModeExclude": {
+    "description": "splitTunnelModeExclude"
+  },
+  "splitTunnelModeInclude": "仅限应用",
+  "@splitTunnelModeInclude": {
+    "description": "splitTunnelModeInclude"
+  },
+  "splitTunnelExcludeDescription": "所选应用绕过 VPN，使用常规网络连接。其他应用仍受保护。",
+  "@splitTunnelExcludeDescription": {
+    "description": "splitTunnelExcludeDescription"
+  },
+  "splitTunnelIncludeDescription": "仅所选应用通过 VPN 传输。其他应用使用常规网络连接。",
+  "@splitTunnelIncludeDescription": {
+    "description": "splitTunnelIncludeDescription"
+  },
+  "splitTunnelApplyNote": "更改将在下次连接时生效。",
+  "@splitTunnelApplyNote": {
+    "description": "splitTunnelApplyNote"
+  },
+  "splitTunnelSearchApps": "搜索应用",
+  "@splitTunnelSearchApps": {
+    "description": "splitTunnelSearchApps"
+  },
+  "splitTunnelLoadError": "无法加载应用列表。",
+  "@splitTunnelLoadError": {
+    "description": "splitTunnelLoadError"
+  },
+  "splitTunnelRetry": "重试",
+  "@splitTunnelRetry": {
+    "description": "splitTunnelRetry"
+  },
+  "splitTunnelNoApps": "未找到应用。",
+  "@splitTunnelNoApps": {
+    "description": "splitTunnelNoApps"
+  }
 }

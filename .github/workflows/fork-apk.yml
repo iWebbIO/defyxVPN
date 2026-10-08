@@ -1,0 +1,127 @@
+name: Fork APK Build (Split Tunneling)
+
+# Fork-only workflow: builds an installable APK without any repository
+# secrets. The private DXcore engine is not downloadable from a fork, so the
+# build uses ci/dxcore-stub, a gomobile stub with the exact API surface the
+# app's Kotlin layer calls. The UI (including split tunneling) is fully
+# functional; the underlying proxy engine is simulated.
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "lib/**"
+      - "android/**"
+      - "test/**"
+      - "ci/**"
+      - ".github/workflows/fork-apk.yml"
+      - "pubspec.*"
+
+jobs:
+  analyze-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.38.4"
+          channel: "stable"
+          architecture: "x64"
+          cache: false
+
+      - name: Generate .env
+        run: |
+          cp .env.exmaple .env
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        # --no-fatal-infos: the repo has pre-existing info-level deprecations
+        # (e.g. withOpacity) that are not from this fork's changes.
+        run: flutter analyze --no-fatal-infos
+
+      - name: Test
+        run: flutter test
+
+  build-apk:
+    needs: [analyze-and-test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.7"
+
+      - name: Accept Android SDK licenses
+        run: yes | sudo "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" --licenses
+
+      - name: Install NDK 29
+        run: |
+          yes | sudo "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" --install "ndk;29.0.13846066"
+
+      - name: Force Gradle to use NDK 29
+        run: |
+          rm -f android/local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/29.0.13846066" > android/local.properties
+          echo "ndkVersion=29.0.13846066" >> android/local.properties
+
+      - name: Install gomobile
+        run: |
+          go install golang.org/x/mobile/cmd/gomobile@v0.0.0-20250911085028-6912353760cf
+          gomobile init
+
+      - name: Build DXcore stub AAR
+        working-directory: ci/dxcore-stub
+        run: |
+          # Resolve golang.org/x/mobile into go.sum before binding; recent
+          # gomobile refuses to bind without it resolvable in the module.
+          go mod tidy
+          mkdir -p ../../android/app/libs
+          gomobile bind -v \
+            -target=android \
+            -androidapi 23 \
+            -ldflags "-checklinkname=0" \
+            -o ../../android/app/libs/DXcore.aar \
+            ./Android
+          ls -la ../../android/app/libs/
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.38.4"
+          channel: "stable"
+          architecture: "x64"
+          cache: false
+
+      - name: Generate .env
+        run: |
+          cp .env.exmaple .env
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      # No signing secrets on the fork: omit key.properties entirely so the
+      # Gradle config falls back to debug signing and the APK still installs.
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: defyxvpn-fork-apk
+          path: build/app/outputs/flutter-apk/app-release.apk

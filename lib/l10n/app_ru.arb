@@ -122,5 +122,49 @@
   "loginByCode": "Войти по коду",
   "backToLoginByEmail": "Вернуться к входу по электронной почте",
   "connectionRequired": "Требуется подключение",
-  "connectionRequiredDescription": "Чтобы завершить безопасный процесс входа или регистрации, вы должны сначала установить соединение, используя один из доступных методов подключения."
+  "connectionRequiredDescription": "Чтобы завершить безопасный процесс входа или регистрации, вы должны сначала установить соединение, используя один из доступных методов подключения.",
+  "settingsExcluded": "ИСКЛЮЧЕНО",
+  "@settingsExcluded": {
+    "description": "settingsExcluded"
+  },
+  "splitTunnelUnavailable": "Разделённое туннелирование доступно только на Android.",
+  "@splitTunnelUnavailable": {
+    "description": "splitTunnelUnavailable"
+  },
+  "splitTunnelModeExclude": "ИСКЛЮЧИТЬ ПРИЛОЖЕНИЯ",
+  "@splitTunnelModeExclude": {
+    "description": "splitTunnelModeExclude"
+  },
+  "splitTunnelModeInclude": "ТОЛЬКО ПРИЛОЖЕНИЯ",
+  "@splitTunnelModeInclude": {
+    "description": "splitTunnelModeInclude"
+  },
+  "splitTunnelExcludeDescription": "Выбранные приложения обходят VPN и используют обычное подключение к интернету. Остальные приложения остаются защищёнными.",
+  "@splitTunnelExcludeDescription": {
+    "description": "splitTunnelExcludeDescription"
+  },
+  "splitTunnelIncludeDescription": "Только выбранные приложения проходят через VPN. Остальные используют обычное подключение.",
+  "@splitTunnelIncludeDescription": {
+    "description": "splitTunnelIncludeDescription"
+  },
+  "splitTunnelApplyNote": "Изменения вступят в силу при следующем подключении.",
+  "@splitTunnelApplyNote": {
+    "description": "splitTunnelApplyNote"
+  },
+  "splitTunnelSearchApps": "Поиск приложений",
+  "@splitTunnelSearchApps": {
+    "description": "splitTunnelSearchApps"
+  },
+  "splitTunnelLoadError": "Не удалось загрузить список приложений.",
+  "@splitTunnelLoadError": {
+    "description": "splitTunnelLoadError"
+  },
+  "splitTunnelRetry": "Повторить",
+  "@splitTunnelRetry": {
+    "description": "splitTunnelRetry"
+  },
+  "splitTunnelNoApps": "Приложения не найдены.",
+  "@splitTunnelNoApps": {
+    "description": "splitTunnelNoApps"
+  }
 }

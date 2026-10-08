@@ -1,4 +1,5 @@
 import 'package:defyx_vpn/l10n/app_localizations.dart';
+import 'package:defyx_vpn/modules/settings/models/split_tunnel_config.dart';
 import 'package:flutter/material.dart';
 
 // Group IDs
@@ -40,6 +41,7 @@ abstract class SettingsRoute {
 // Subtitles
 abstract class SettingsSubtitle {
   static const splitTunnelIncluded = 'INCLUDED';
+  static const splitTunnelExcluded = 'EXCLUDED';
 }
 
 // Messages
@@ -63,6 +65,10 @@ class SettingsText {
   String get escapeModeTitle => _l10n?.settingsEscapeMode ?? SettingsGroupTitle.trafficControl;
   String get splitTunnelTitle => _l10n?.settingsSplitTunnel ?? SettingsItemTitle.splitTunnel;
   String get splitTunnelSubtitle => _l10n?.settingsIncluded ?? SettingsSubtitle.splitTunnelIncluded;
+  String splitTunnelSubtitleFor(SplitTunnelMode mode) =>
+      mode == SplitTunnelMode.include
+      ? (_l10n?.settingsIncluded ?? SettingsSubtitle.splitTunnelIncluded)
+      : (_l10n?.settingsExcluded ?? SettingsSubtitle.splitTunnelExcluded);
   String get deepScanTitle => _l10n?.settingsDeepScan ?? SettingsItemTitle.deepScan;
   String get healthCheckTitle => _l10n?.settingsHealthCheck ?? SettingsItemTitle.healthCheck;
   String get killSwitchTitle => _l10n?.settingsKillSwitch ?? SettingsItemTitle.killSwitch;

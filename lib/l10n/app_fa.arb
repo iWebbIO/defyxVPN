@@ -122,5 +122,49 @@
   "loginByCode": "ورود با کد",
   "backToLoginByEmail": "بازگشت به ورود با ایمیل",
   "connectionRequired": "اتصال لازم است",
-  "connectionRequiredDescription": "برای تکمیل فرآیند امن ورود یا ثبت‌نام، ابتدا باید با استفاده از یکی از روش‌های اتصال موجود، اتصال برقرار کنید."
+  "connectionRequiredDescription": "برای تکمیل فرآیند امن ورود یا ثبت‌نام، ابتدا باید با استفاده از یکی از روش‌های اتصال موجود، اتصال برقرار کنید.",
+  "settingsExcluded": "مستثنا",
+  "@settingsExcluded": {
+    "description": "settingsExcluded"
+  },
+  "splitTunnelUnavailable": "قابلیت تانل تقسیمی فقط در اندروید در دسترس است.",
+  "@splitTunnelUnavailable": {
+    "description": "splitTunnelUnavailable"
+  },
+  "splitTunnelModeExclude": "استثنا کردن اپ‌ها",
+  "@splitTunnelModeExclude": {
+    "description": "splitTunnelModeExclude"
+  },
+  "splitTunnelModeInclude": "فقط اپ‌های انتخابی",
+  "@splitTunnelModeInclude": {
+    "description": "splitTunnelModeInclude"
+  },
+  "splitTunnelExcludeDescription": "اپ‌های انتخابی از VPN عبور نمی‌کنند و از اتصال معمولی اینترنت استفاده می‌کنند. سایر اپ‌ها محافظت می‌شوند.",
+  "@splitTunnelExcludeDescription": {
+    "description": "splitTunnelExcludeDescription"
+  },
+  "splitTunnelIncludeDescription": "فقط اپ‌های انتخابی از VPN عبور می‌کنند. سایر اپ‌ها از اتصال معمولی اینترنت استفاده می‌کنند.",
+  "@splitTunnelIncludeDescription": {
+    "description": "splitTunnelIncludeDescription"
+  },
+  "splitTunnelApplyNote": "تغییرات در اتصال بعدی اعمال می‌شوند.",
+  "@splitTunnelApplyNote": {
+    "description": "splitTunnelApplyNote"
+  },
+  "splitTunnelSearchApps": "جستجوی اپ‌ها",
+  "@splitTunnelSearchApps": {
+    "description": "splitTunnelSearchApps"
+  },
+  "splitTunnelLoadError": "بارگذاری لیست اپ‌ها ناموفق بود.",
+  "@splitTunnelLoadError": {
+    "description": "splitTunnelLoadError"
+  },
+  "splitTunnelRetry": "تلاش مجدد",
+  "@splitTunnelRetry": {
+    "description": "splitTunnelRetry"
+  },
+  "splitTunnelNoApps": "اپی یافت نشد.",
+  "@splitTunnelNoApps": {
+    "description": "splitTunnelNoApps"
+  }
 }

@@ -112,6 +112,9 @@ class MainActivity : FlutterActivity() {
                 "getSharedDirectory" -> result.success("${cacheDir.absolutePath}/defyx")
                 "setConnectionMethod" ->
                         setConnectionMethod(call.arguments as? Map<String, Any>, result)
+                "setSplitTunnelApps" ->
+                        setSplitTunnelApps(call.arguments as? Map<String, Any>, result)
+                "getInstalledApps" -> getInstalledApps(result)
                 "login" -> login(call.arguments as? Map<String, Any>, result)
                 "loginByCode" -> loginByCode(call.arguments as? Map<String, Any>, result)
                 else -> result.notImplemented()
@@ -420,6 +423,46 @@ class MainActivity : FlutterActivity() {
                             "Failed to Set Connection Method",
                             e.localizedMessage
                     )
+                }
+            }
+        }
+    }
+
+    private fun setSplitTunnelApps(args: Map<String, Any>?, result: MethodChannel.Result) {
+        try {
+            val mode = args?.get("mode") as? String ?: "disabled"
+            @Suppress("UNCHECKED_CAST")
+            val packages = (args?.get("packages") as? List<String>) ?: emptyList()
+            DefyxVpnService.setSplitTunnelApps(mode, packages)
+            result.success(true)
+        } catch (e: Exception) {
+            Log.e(TAG, "Set Split Tunnel Apps failed: ${e.message}", e)
+            result.error("SET_SPLIT_TUNNEL_ERROR", "Failed to set split tunnel apps", e.localizedMessage)
+        }
+    }
+
+    // Launchable apps for the split tunnel app picker; the VPN app itself
+    // is hidden (routing it through its own tunnel loops the connection),
+    // and uninstalled packages are filtered by VpnService at tunnel time.
+    private fun getInstalledApps(result: MethodChannel.Result) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val pm = packageManager
+                val selfPackage = applicationContext.packageName
+                val apps = pm.getInstalledApplications(0)
+                    .filter { pm.getLaunchIntentForPackage(it.packageName) != null }
+                    .filter { it.packageName != selfPackage }
+                    .map { appInfo ->
+                        mapOf(
+                            "packageName" to appInfo.packageName,
+                            "label" to (pm.getApplicationLabel(appInfo)?.toString() ?: appInfo.packageName)
+                        )
+                    }
+                withContext(Dispatchers.Main) { result.success(apps) }
+            } catch (e: Exception) {
+                Log.e(TAG, "Get installed apps failed: ${e.message}", e)
+                withContext(Dispatchers.Main) {
+                    result.error("GET_INSTALLED_APPS_ERROR", "Failed to get installed apps", e.localizedMessage)
                 }
             }
         }

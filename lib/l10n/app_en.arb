@@ -604,5 +604,49 @@
   "connectionRequiredDescription": "To complete a secure login or registration process, you must first establish a connection using one of the available connection methods.",
   "@connectionRequiredDescription": {
     "description": "Connection required dialog description"
+  },
+  "settingsExcluded": "EXCLUDED",
+  "@settingsExcluded": {
+    "description": "settingsExcluded"
+  },
+  "splitTunnelUnavailable": "Split tunneling is only available on Android.",
+  "@splitTunnelUnavailable": {
+    "description": "splitTunnelUnavailable"
+  },
+  "splitTunnelModeExclude": "EXCLUDE APPS",
+  "@splitTunnelModeExclude": {
+    "description": "splitTunnelModeExclude"
+  },
+  "splitTunnelModeInclude": "INCLUDE APPS",
+  "@splitTunnelModeInclude": {
+    "description": "splitTunnelModeInclude"
+  },
+  "splitTunnelExcludeDescription": "Selected apps bypass the VPN and use your regular internet connection. All other apps stay protected.",
+  "@splitTunnelExcludeDescription": {
+    "description": "splitTunnelExcludeDescription"
+  },
+  "splitTunnelIncludeDescription": "Only the selected apps are routed through the VPN. All other apps use your regular internet connection.",
+  "@splitTunnelIncludeDescription": {
+    "description": "splitTunnelIncludeDescription"
+  },
+  "splitTunnelApplyNote": "Changes take effect the next time you connect.",
+  "@splitTunnelApplyNote": {
+    "description": "splitTunnelApplyNote"
+  },
+  "splitTunnelSearchApps": "Search apps",
+  "@splitTunnelSearchApps": {
+    "description": "splitTunnelSearchApps"
+  },
+  "splitTunnelLoadError": "Could not load the app list.",
+  "@splitTunnelLoadError": {
+    "description": "splitTunnelLoadError"
+  },
+  "splitTunnelRetry": "Retry",
+  "@splitTunnelRetry": {
+    "description": "splitTunnelRetry"
+  },
+  "splitTunnelNoApps": "No apps found.",
+  "@splitTunnelNoApps": {
+    "description": "splitTunnelNoApps"
   }
 }

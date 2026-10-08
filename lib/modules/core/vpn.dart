@@ -10,6 +10,7 @@ import 'package:defyx_vpn/modules/core/vpn_bridge.dart';
 import 'package:defyx_vpn/modules/main/application/main_screen_provider.dart';
 import 'package:defyx_vpn/modules/settings/providers/auth_provider.dart';
 import 'package:defyx_vpn/modules/settings/providers/settings_provider.dart';
+import 'package:defyx_vpn/modules/settings/providers/split_tunnel_provider.dart';
 import 'package:defyx_vpn/shared/providers/connection_state_provider.dart';
 import 'package:defyx_vpn/shared/providers/flow_line_provider.dart';
 import 'package:defyx_vpn/shared/providers/group_provider.dart';
@@ -276,6 +277,15 @@ class VPN {
     analyticsService.logVpnConnectAttempt(pattern.isEmpty ? 'auto' : pattern);
 
     try {
+      // Split tunneling is applied when the Android tunnel is established
+      // after a successful connect; desktop/iOS ignore the config.
+      if (Platform.isAndroid) {
+        final splitTunnelNotifier = _container?.read(
+          splitTunnelProvider.notifier,
+        );
+        await splitTunnelNotifier?.ensureInitialized();
+        await _vpnBridge.setSplitTunnelApps(splitTunnelNotifier?.state.config);
+      }
       await _vpnBridge.startVPN(
         flowLineStorage,
         pattern,

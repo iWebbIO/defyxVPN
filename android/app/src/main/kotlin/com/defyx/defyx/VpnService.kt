@@ -28,6 +28,16 @@ class DefyxVpnService : VpnService() {
         private var isVpnConnected = false
         private var connectionMethod: String? = ""
 
+        // Split tunneling: which apps the tunnel routes, set from Flutter
+        // before a connection is established. "disabled" routes everything.
+        @Volatile private var splitTunnelMode: String = "disabled"
+        @Volatile private var splitTunnelPackages: Set<String> = emptySet()
+
+        fun setSplitTunnelApps(mode: String, packages: List<String>) {
+            splitTunnelMode = mode
+            splitTunnelPackages = packages.toSet()
+        }
+
         fun setVpnStatusListener(l: (String) -> Unit) {
             listener = l
         }
@@ -176,9 +186,7 @@ class DefyxVpnService : VpnService() {
                                 .setBlocking(true)
                                 .allowBypass()
 
-                try {
-                    builder.addDisallowedApplication(context.packageName)
-                } catch (_: Exception) {}
+                applySplitTunnelApps(builder, context.packageName)
                 
                 vpnInterface?.close()
                 vpnInterface = builder.establish()
@@ -224,6 +232,51 @@ class DefyxVpnService : VpnService() {
                 updateNotification("DefyxVPN", "Connection failed")
                 notifyVpnStatus("disconnected")
                 withContext(Dispatchers.Main) { saveVpnState(false) }
+            }
+        }
+    }
+
+    /**
+     * Applies per-app routing to the tunnel. Android forbids mixing
+     * addAllowedApplication with addDisallowedApplication on one builder,
+     * so include mode skips the self-exclusion: the VPN app itself is
+     * naturally excluded because it is not in the allowed list.
+     */
+    private fun applySplitTunnelApps(builder: Builder, selfPackage: String) {
+        if (splitTunnelMode == "include") {
+            var applied = 0
+            for (pkg in splitTunnelPackages) {
+                // A stale config could still name the VPN app itself;
+                // allowing it would loop its proxy traffic through the tunnel.
+                if (pkg == selfPackage) continue
+                try {
+                    builder.addAllowedApplication(pkg)
+                    applied++
+                } catch (e: Exception) {
+                    Log.w(TAG, "addAllowedApplication failed for $pkg: ${e.message}")
+                }
+            }
+            // A builder with no allowed applications routes everything,
+            // which is safer than routing nothing; the Dart side repushes
+            // the config on every connect, so this fallback is one-shot.
+            if (applied == 0 && splitTunnelPackages.isNotEmpty()) {
+                Log.w(TAG, "No allowed applications applied; routing everything")
+            }
+            return
+        }
+        // Full tunnel or exclude mode: keep the VPN app's own traffic out of
+        // the tunnel so its proxy connection cannot loop through itself.
+        try {
+            builder.addDisallowedApplication(selfPackage)
+        } catch (_: Exception) {}
+        if (splitTunnelMode == "exclude") {
+            for (pkg in splitTunnelPackages) {
+                if (pkg == selfPackage) continue // already disallowed above
+                try {
+                    builder.addDisallowedApplication(pkg)
+                } catch (e: Exception) {
+                    Log.w(TAG, "addDisallowedApplication failed for $pkg: ${e.message}")
+                }
             }
         }
     }

@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../modules/main/presentation/screens/main_screen.dart';
-import '../../modules/splash/presentation/splash_screen.dart';
 import '../../modules/settings/presentation/screens/settings_screen.dart';
+import '../../modules/settings/presentation/screens/split_tunnel_screen.dart';
+import '../../modules/splash/presentation/screens/splash_screen.dart';
 import '../../modules/speed_test/presentation/screens/speed_test_screen.dart';
 import '../../shared/layout/navbar/defyx_navbar.dart';
 
@@ -14,7 +15,8 @@ enum DefyxVPNRoutes {
   splash("/splash"),
   main("/main"),
   settings("/settings"),
-  speedTest("/speedTest");
+  speedTest("/speedTest"),
+  splitTunnel("/settings/split_tunnel");
 
   final String route;
   const DefyxVPNRoutes(this.route);
@@ -150,6 +152,16 @@ final routerProvider = Provider<GoRouter>((ref) {
               state.pageKey,
               SlideDirection.rightToLeft,
             ),
+            routes: [
+              GoRoute(
+                path: 'split_tunnel',
+                pageBuilder: (context, state) => _createPageAnimation(
+                  const SplitTunnelScreen(),
+                  state.pageKey,
+                  SlideDirection.rightToLeft,
+                ),
+              ),
+            ],
           ),
           GoRoute(
             path: DefyxVPNRoutes.speedTest.route,

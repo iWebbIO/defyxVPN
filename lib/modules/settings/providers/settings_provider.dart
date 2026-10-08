@@ -9,6 +9,7 @@ import '../models/settings_group.dart';
 import '../constants/settings_constants.dart';
 import '../factories/settings_factory.dart';
 import '../presentation/widgets/settings_toast_message.dart';
+import 'split_tunnel_provider.dart';
 
 class SettingsState {
   final Map<String, SettingsGroup> groups;
@@ -47,6 +48,9 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
   Future<void> _initializeSettings() async {
     await _loadSettingsFromStorage();
     await _updateConnectionMethodFromFlowLine();
+    // Split tunnel config feeds the split tunnel item subtitle, so it must be
+    // loaded before the traffic control group is (re)created.
+    await ref.read(splitTunnelProvider.notifier).ensureInitialized();
     _ensureStaticGroups();
     _isInitialized = true;
     debugPrint('Settings initialized');
@@ -107,10 +111,13 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
 
   SettingsGroup _createTrafficControlGroup(SettingsText text) {
     final savedGroup = state.groups[SettingsGroupId.trafficControl];
+    final splitTunnelConfig = ref.read(splitTunnelProvider).config;
     return SettingsFactory.createTrafficControlGroup(
       title: text.escapeModeTitle,
       splitTunnelTitle: text.splitTunnelTitle,
-      splitTunnelSubtitle: text.splitTunnelSubtitle,
+      splitTunnelSubtitle: splitTunnelConfig.isActive
+          ? text.splitTunnelSubtitleFor(splitTunnelConfig.mode)
+          : text.splitTunnelSubtitle,
       deepScanTitle: text.deepScanTitle,
       healthCheckTitle: text.healthCheckTitle,
       killSwitchTitle: text.killSwitchTitle,
@@ -433,12 +440,16 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
     // Update traffic control group title and items if it exists
     final trafficGroup = updatedGroups[SettingsGroupId.trafficControl];
     if (trafficGroup != null) {
+      final splitTunnelConfig = ref.read(splitTunnelProvider).config;
+      final splitTunnelSubtitle = splitTunnelConfig.isActive
+          ? text.splitTunnelSubtitleFor(splitTunnelConfig.mode)
+          : text.splitTunnelSubtitle;
       final updatedItems = trafficGroup.items.map((item) {
         switch (item.id) {
           case SettingsItemId.splitTunnel:
             return item.copyWith(
               title: text.splitTunnelTitle,
-              subtitle: text.splitTunnelSubtitle,
+              subtitle: splitTunnelSubtitle,
             );
           case SettingsItemId.deepScan:
             return item.copyWith(title: text.deepScanTitle);

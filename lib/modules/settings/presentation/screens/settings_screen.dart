@@ -7,6 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import '../../constants/settings_constants.dart';
 import '../../providers/settings_provider.dart';
 import '../widgets/settings_group_widget.dart';
@@ -389,7 +390,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     }
                   : null,
               onNavigate: (route) {
-                Navigator.pushNamed(context, route);
+                context.push(route);
               },
             ),
           )

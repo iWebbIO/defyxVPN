@@ -1,6 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import '../settings/models/split_tunnel_config.dart';
+
 class VpnBridge {
   VpnBridge._internal();
   static final VpnBridge _instance = VpnBridge._internal();
@@ -48,6 +50,27 @@ class VpnBridge {
 
   Future<void> startTun2socks() =>
       _methodChannel.invokeMethod("startTun2socks");
+
+  /// Pushes the split tunneling config to the native tunnel builder so the
+  /// next established tunnel routes apps accordingly. A null config is the
+  /// same as an inactive one: full tunnel, no app filters.
+  Future<void> setSplitTunnelApps(SplitTunnelConfig? config) async {
+    await _methodChannel.invokeMethod("setSplitTunnelApps", {
+      "mode": config?.effectiveMode ?? 'disabled',
+      "packages": config?.packages ?? const <String>[],
+    });
+  }
+
+  /// Launchable apps installed on the device (Android only).
+  Future<List<InstalledApp>> getInstalledApps() async {
+    final apps = await _methodChannel.invokeMethod<List<dynamic>>(
+      "getInstalledApps",
+    );
+    return (apps ?? [])
+        .whereType<Map>()
+        .map(InstalledApp.fromJson)
+        .toList();
+  }
 
   Future<bool> isTunnelRunning() async =>
       (await _methodChannel.invokeMethod<bool>("isTunnelRunning")) ?? false;
