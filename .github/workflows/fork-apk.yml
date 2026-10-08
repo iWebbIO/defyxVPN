@@ -42,11 +42,18 @@ jobs:
         run: flutter pub get
 
       - name: Analyze
-        # Errors still fail the build; infos and warnings are tolerated
-        # because the repo carries pre-existing upstream ones (deprecations,
-        # unused fields, protected-member accesses) that are not this
-        # fork's changes to fix.
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+        # Gate on analyzer errors only. The repo carries pre-existing
+        # upstream warnings and infos (deprecations, unused fields,
+        # protected-member accesses) out of this fork's scope, and flutter
+        # analyze's exit code does not reliably downgrade them even with
+        # --no-fatal-infos/--no-fatal-warnings.
+        run: |
+          flutter analyze --no-fatal-infos --no-fatal-warnings 2>&1 | tee analyze_output.txt || true
+          if grep -E '^\s*error\s+•' analyze_output.txt; then
+            echo "::error::Analyzer errors found (see lines above)"
+            exit 1
+          fi
+          echo "No analyzer errors; pre-existing warnings/infos tolerated."
 
       - name: Test
         run: flutter test
