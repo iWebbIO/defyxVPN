@@ -79,15 +79,13 @@ jobs:
       - name: Accept Android SDK licenses
         run: yes | sudo "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" --licenses
 
-      - name: Install NDK 29
+      - name: Install NDKs
+        # The app pins NDK 29; the jni plugin (jni_flutter -> :jni) pins
+        # 28.2.13676358. Both must be present so each Gradle project resolves
+        # its own ndkVersion - forcing a single ndk.dir in local.properties
+        # makes them disagree (CXX1104).
         run: |
-          yes | sudo "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" --install "ndk;29.0.13846066"
-
-      - name: Force Gradle to use NDK 29
-        run: |
-          rm -f android/local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/29.0.13846066" > android/local.properties
-          echo "ndkVersion=29.0.13846066" >> android/local.properties
+          yes | sudo "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" --install "ndk;29.0.13846066" "ndk;28.2.13676358"
 
       - name: Install gomobile
         run: |
